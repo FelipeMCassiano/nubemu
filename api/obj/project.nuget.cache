@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "rdQ8ozgzj9+hJtdwQ36QYi4OVxrV9ZwxM0WKeObhUWYyqj1YjvOiERddt2KAjHFhYCnP3DIfifkDHNT/tDr1Yg==",
+  "success": true,
+  "projectFilePath": "/home/felipe/projects/nubemu/api/api.csproj",
+  "expectedPackageFiles": [
+    "/home/felipe/.nuget/packages/microsoft.aspnetcore.app.ref/8.0.6/microsoft.aspnetcore.app.ref.8.0.6.nupkg.sha512"
+  ],
+  "logs": []
+}

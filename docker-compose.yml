@@ -1,0 +1,10 @@
+version: "3.5"
+services:
+    api:
+        image: .
+        hostname: api-nubemu
+        environment: {}
+        ports:
+            - 8080:81
+        networks: []
+networks: {}
