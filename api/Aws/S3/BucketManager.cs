@@ -7,38 +7,25 @@ namespace Aws.S3.BucketManager;
 
 public class BucketManager
 {
-    private static IAmazonS3 s3Client;
+    private static IAmazonS3 s3Client = new AmazonS3Client(new AmazonS3Config { ServiceURL = "http://s3.localhost.localstack.cloud:4566", ForcePathStyle = true });
 
-    public BucketManager()
+    public async Task<PutBucketResponse> CreateBucketAsync(BucketRequestModel bucketRequest)
     {
-        var config = new AmazonS3Config { ServiceURL = "http://s3.localhost.localstack.cloud:4566", ForcePathStyle = true };
-        s3Client = new AmazonS3Client(config);
-    }
-
-    public async Task<bool> CreateBucketAsync(BucketRequestModel bucketRequest)
-    {
-        try
+        var request = new PutBucketRequest
         {
-            var request = new PutBucketRequest
-            {
-                BucketName = bucketRequest.Name,
-                UseClientRegion = true,
+            BucketName = bucketRequest.Name,
+            UseClientRegion = true,
 
-            };
+        };
 
-            var response = await s3Client.PutBucketAsync(request);
-            return response.HttpStatusCode == System.Net.HttpStatusCode.OK;
+        var response = await s3Client.PutBucketAsync(request);
+        return response;
 
-        }
-        catch (AmazonS3Exception ex)
-        {
-            Console.WriteLine($"Error creating bucket: {ex.Message}");
-            return false;
-        }
     }
 
 
-    public async Task<bool> DeleteBucketAsync(string bucketName)
+
+    public async Task<DeleteBucketResponse> DeleteBucketAsync(string bucketName)
     {
         var request = new DeleteBucketRequest
         {
@@ -48,8 +35,62 @@ public class BucketManager
         };
 
         var response = await s3Client.DeleteBucketAsync(request);
-        Console.WriteLine(response.ToString());
-        return response.HttpStatusCode == System.Net.HttpStatusCode.OK;
+        return response;
+    }
+    public async Task<PutLifecycleConfigurationResponse> CreateLifeclyeBucket(BucketLifecycleRuleRequestModel lifecycleRuleRequestModel)
+    {
+
+        var newRules = new List<LifecycleRule>();
+
+        foreach (var r in lifecycleRuleRequestModel.lifecycleRules)
+        {
+
+            LifecycleRuleStatus status;
+            switch (r.status)
+            {
+                case LifecycleRulesStatusModel.Enabled:
+                    status = LifecycleRuleStatus.Enabled;
+                    break;
+                case LifecycleRulesStatusModel.Disabled:
+                    status = LifecycleRuleStatus.Disabled;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(r.status), "Invalid status value.");
+            }
+
+            var rule = new LifecycleRule
+            {
+                Filter = new LifecycleFilter
+                {
+                    LifecycleFilterPredicate = new LifecyclePrefixPredicate
+                    {
+                        Prefix = r.prefix
+                    }
+                },
+                Id = r.id,
+                Expiration = new LifecycleRuleExpiration { Days = r.expiration },
+                Status = status
+            };
+            newRules.Add(rule);
+
+        };
+        var request = new PutLifecycleConfigurationRequest
+        {
+            BucketName = lifecycleRuleRequestModel.bucketName,
+            Configuration = new LifecycleConfiguration
+            {
+                Rules = newRules
+            }
+        };
+
+        var response = await s3Client.PutLifecycleConfigurationAsync(request);
+
+        return response;
+    }
+    public async Task<ListBucketsResponse> ListBuckets()
+    {
+        var res = await s3Client.ListBucketsAsync();
+        return res;
     }
 
 
