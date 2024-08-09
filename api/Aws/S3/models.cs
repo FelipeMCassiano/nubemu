@@ -29,3 +29,11 @@ public enum LifecycleRulesStatusModel
     Disabled
 
 }
+public record BucketPolicyRequestModel
+{
+    public required string bucketName { get; set; }
+    public required string effect { get; set; }
+    public string? principal { get; set; }
+    public required string action { get; set; }
+    public required string resource { get; set; }
+}

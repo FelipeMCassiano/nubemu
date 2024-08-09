@@ -80,9 +80,29 @@ public class ControllerApi : ControllerBase
 
             return Results.Ok();
         }
-        catch (AmazonS3Exception aex)
+        catch (AmazonS3Exception ex)
         {
-            return Results.Json(aex.Message, statusCode: StatusCodes.Status500InternalServerError);
+            return Results.Json(ex.Message, statusCode: StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    [HttpPost]
+    [Route("/s3/create/policy")]
+    public async Task<IResult> CreateS3Policy(BucketPolicyRequestModel bucketPolicyRequest)
+    {
+        try
+        {
+            var res = await bucketManager.CreateBucketPolicy(bucketPolicyRequest);
+            if (res.HttpStatusCode != System.Net.HttpStatusCode.NoContent)
+            {
+                return Results.BadRequest(res);
+            }
+            return Results.Ok();
+
+        }
+        catch (AmazonS3Exception ex)
+        {
+            return Results.Json(ex.Message, statusCode: StatusCodes.Status500InternalServerError);
         }
     }
 }

@@ -2,6 +2,7 @@ using Aws.S3.Models;
 using Amazon;
 using Amazon.S3;
 using Amazon.S3.Model;
+using System.Text.Json;
 
 namespace Aws.S3.BucketManager;
 
@@ -22,8 +23,6 @@ public class BucketManager
         return response;
 
     }
-
-
 
     public async Task<DeleteBucketResponse> DeleteBucketAsync(string bucketName)
     {
@@ -92,6 +91,42 @@ public class BucketManager
         var res = await s3Client.ListBucketsAsync();
         return res;
     }
+    public async Task<PutBucketPolicyResponse> CreateBucketPolicy(BucketPolicyRequestModel bucketPolicy)
+    {
+        if (bucketPolicy.principal == null)
+        {
+            bucketPolicy.principal = "*";
+        }
+
+
+
+        var policyJson = JsonSerializer.Serialize(new
+        {
+            Version = "2012-10-17",
+            Statement = new[]{
+            new {
+            Effect = bucketPolicy.effect,
+            Principal = bucketPolicy.principal,
+            Action = bucketPolicy.action,
+            Resource = $"arn:aws:s3:::{bucketPolicy.resource}"
+
+            }
+            }
+        });
+
+
+        var request = new PutBucketPolicyRequest
+        {
+            BucketName = bucketPolicy.bucketName,
+            Policy = policyJson
+        };
+
+        var response = await s3Client.PutBucketPolicyAsync(request);
+        return response;
+
+    }
+
+
 
 
 }
