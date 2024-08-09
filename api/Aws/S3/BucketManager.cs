@@ -97,9 +97,6 @@ public class BucketManager
         {
             bucketPolicy.principal = "*";
         }
-
-
-
         var policyJson = JsonSerializer.Serialize(new
         {
             Version = "2012-10-17",
@@ -113,7 +110,6 @@ public class BucketManager
             }
             }
         });
-
 
         var request = new PutBucketPolicyRequest
         {

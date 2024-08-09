@@ -84,6 +84,10 @@ public class ControllerApi : ControllerBase
         {
             return Results.Json(ex.Message, statusCode: StatusCodes.Status500InternalServerError);
         }
+        catch (Exception ex)
+        {
+            return Results.Json(ex.Message, statusCode: StatusCodes.Status500InternalServerError);
+        }
     }
 
     [HttpPost]
