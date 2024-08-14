@@ -1,10 +1,10 @@
 version: "3.5"
 services:
-    api:
-        image: .
+    numbemu-s3:
+        build: 
+          context:  ./s3-service/
         hostname: api-nubemu
-        environment: {}
+        environment:
+          - ASPNETCORE_URLS=http://+:80
         ports:
-            - 8080:81
-        networks: []
-networks: {}
+            - 8080:80
