@@ -24,7 +24,8 @@ public class ControllerApi : ControllerBase
                 return Results.BadRequest(res);
             }
 
-            return Results.Ok();
+
+            return Results.Ok($"bucket created: {s3BucketRequest.Name}");
 
         }
         catch (AmazonS3Exception ex)
@@ -40,10 +41,17 @@ public class ControllerApi : ControllerBase
     [Route("/s3/deletebucket/{name}")]
     public async Task<IResult> DeleteS3(string name)
     {
-        var res = await bucketManager.DeleteBucketAsync(name);
-        if (res.HttpStatusCode != System.Net.HttpStatusCode.OK)
+        try
         {
-            return Results.NotFound(res);
+            var res = await bucketManager.DeleteBucketAsync(name);
+            if (res.HttpStatusCode != System.Net.HttpStatusCode.OK)
+            {
+                return Results.NotFound(res);
+            }
+        }
+        catch (AmazonS3Exception ex)
+        {
+            return Results.Json(ex.Message, statusCode: StatusCodes.Status500InternalServerError);
         }
 
         return Results.Ok();
