@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ec2-service")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b17c013e2309c56643ad79b402f3ab6d2a5ccab6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5e0ad489ff0d54439cd3aaec32d4350ffb4c82f0")]
 [assembly: System.Reflection.AssemblyProductAttribute("ec2-service")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ec2-service")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

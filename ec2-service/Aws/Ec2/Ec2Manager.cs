@@ -16,7 +16,6 @@ public class Ec2Manager
        ServiceURL = "http://localhost:4566",
        UseHttp = true
    }
-
 );
 
     private static Dictionary<string, string> _imagesIds = new Dictionary<string, string>(){
@@ -25,8 +24,7 @@ public class Ec2Manager
             {"windows", "ami-03cf127a"},
     };
 
-
-    public async Task<RunInstancesResponse> LaunchEc2Instance(InstaceRequestModel instaceRequestModel)
+    public async Task<RunInstancesResponse> LaunchEc2Instance(InstanceRequestModel instaceRequestModel)
     {
         var imgId = _imagesIds[instaceRequestModel.ec2Image.ToLower()];
 
@@ -37,6 +35,15 @@ public class Ec2Manager
             InstanceType = InstanceType.FindValue(instaceRequestModel.instanceType),
             MinCount = instaceRequestModel.minCount,
             MaxCount = instaceRequestModel.maxCount,
+            TagSpecifications = new List<TagSpecification>{
+                new TagSpecification{
+                    ResourceType = "instance",
+                    Tags = new List<Tag>{
+                        new Tag {Key = "Name", Value = instaceRequestModel.name }
+                    }
+                }
+            }
+
         };
 
         var response = await _ec2Client.RunInstancesAsync(request);
@@ -45,6 +52,34 @@ public class Ec2Manager
 
     }
 
+    public async Task<List<InstanceResponseModel>> ListEc2Instances()
+    {
+        var nameTag = new Tag { Key = "Name" };
+
+        var response = await _ec2Client.DescribeInstancesAsync();
+
+        var instances = new List<InstanceResponseModel>();
+
+        foreach (var reservations in response.Reservations)
+        {
+            foreach (var i in reservations.Instances)
+            {
+                var name = i.Tags.Find(x => x.Key == nameTag.Key);
+                if (name is null)
+                {
+                    continue;
+                }
+
+                var instance = new InstanceResponseModel(name.Value, i.State.Name);
+
+                instances.Add(instance);
+
+            }
+        }
+
+        return instances;
+
+    }
 
 
 }
