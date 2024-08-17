@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "a/JbvKCH7Ok9iC9xNmiFu6Zur+r2z2JUjHEOur7BvR0=",
+  "Source": "ec2-service",
+  "BasePath": "_content/ec2-service",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
