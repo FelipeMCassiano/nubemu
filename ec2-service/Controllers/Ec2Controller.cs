@@ -13,7 +13,7 @@ public class Ec2Controller : Controller
 
     [HttpPost]
     [Route("/ec2/launchinstance")]
-    public async Task<IResult> CreateEc2Instance([FromBody] InstaceRequestModel request)
+    public async Task<IResult> CreateEc2Instance([FromBody] InstanceRequestModel request)
     {
 
         var res = await ec2Manager.LaunchEc2Instance(request);
@@ -25,6 +25,14 @@ public class Ec2Controller : Controller
 
 
         return Results.Created("Instance launched", res);
+    }
+
+    [HttpGet]
+    [Route("/ec2/listinstances")]
+    public async Task<IResult> ListEc2Instace()
+    {
+        var res = await ec2Manager.ListEc2Instances();
+        return Results.Ok(res);
     }
 
 
