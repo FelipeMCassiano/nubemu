@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="../build/ec2-service.props" />
+</Project>
