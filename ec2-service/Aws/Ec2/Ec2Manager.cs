@@ -46,7 +46,7 @@ public class Ec2Manager
         };
 
         var response = await _ec2Client.RunInstancesAsync(request);
-        _ec2Client.runI
+
 
         return response;
 
@@ -138,6 +138,26 @@ public class Ec2Manager
 
     }
 
+    public async Task<StopInstancesResponse> StopInstance(string instanceName)
+    {
+        var instances = await GetInstancesByName(instanceName);
+        var instancesIds = new List<string>();
+
+        foreach (var i in instances)
+        {
+            instancesIds.Add(i.instanceId);
+
+        }
+        var stopRequest = new StopInstancesRequest
+        {
+            InstanceIds = instancesIds
+        };
+
+
+        var response = await _ec2Client.StopInstancesAsync(stopRequest);
+        return response;
+
+    }
 
 }
 
