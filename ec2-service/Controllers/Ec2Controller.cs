@@ -40,10 +40,16 @@ public class Ec2Controller : Controller
     [Route("/ec2/terminateinstance/{name}")]
     public async Task<IResult> TerminateInstance(string name)
     {
-
         var res = await ec2Manager.TerminateInstance(name);
         return Results.Ok(res);
 
+    }
+    [HttpGet]
+    [Route("/ec2/stopinstance/{name}")]
+    public async Task<IResult> StopInstance(string name)
+    {
+        var res = await ec2Manager.StopInstance(name);
+        return Results.Ok(res);
     }
 
 
