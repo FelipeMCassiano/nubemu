@@ -13,7 +13,7 @@ public class Ec2Controller : Controller
 
     [HttpPost]
     [Route("/ec2/launchinstance")]
-    public async Task<IResult> CreateEc2Instance([FromBody] InstanceRequestModel request)
+    public async Task<IResult> LaunchEc2Instance([FromBody] InstanceRequestModel request)
     {
 
         var res = await ec2Manager.LaunchEc2Instance(request);
@@ -35,6 +35,16 @@ public class Ec2Controller : Controller
         return Results.Ok(res);
     }
 
+
+    [HttpDelete]
+    [Route("/ec2/terminateinstance/{name}")]
+    public async Task<IResult> TerminateInstance(string name)
+    {
+
+        var res = await ec2Manager.TerminateInstance(name);
+        return Results.Ok(res);
+
+    }
 
 
 }
