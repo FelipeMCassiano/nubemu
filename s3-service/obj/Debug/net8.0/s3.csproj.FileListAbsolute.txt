@@ -33,3 +33,5 @@
 /home/felipe/projects/nubemu/s3-service/obj/Debug/net8.0/s3.pdb
 /home/felipe/projects/nubemu/s3-service/obj/Debug/net8.0/s3.genruntimeconfig.cache
 /home/felipe/projects/nubemu/s3-service/obj/Debug/net8.0/ref/s3.dll
+/home/felipe/projects/nubemu/s3-service/bin/Debug/net8.0/OneOf.dll
+/home/felipe/projects/nubemu/s3-service/bin/Debug/net8.0/Swashbuckle.AspNetCore.Annotations.dll

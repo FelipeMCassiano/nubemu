@@ -1,8 +1,9 @@
 using Aws.S3.Models;
-using Amazon;
 using Amazon.S3;
 using Amazon.S3.Model;
 using System.Text.Json;
+using Errors;
+using OneOf;
 
 namespace Aws.S3.BucketManager;
 
@@ -10,7 +11,7 @@ public class BucketManager
 {
     private static IAmazonS3 s3Client = new AmazonS3Client(new AmazonS3Config { ServiceURL = "http://s3.localhost.localstack.cloud:4566", ForcePathStyle = true });
 
-    public async Task<PutBucketResponse> CreateBucketAsync(BucketRequestModel bucketRequest)
+    public async Task<OneOf<PutBucketResponse, BucketNameConflictError>> CreateBucketAsync(BucketRequestModel bucketRequest)
     {
         var request = new PutBucketRequest
         {
@@ -18,6 +19,14 @@ public class BucketManager
             UseClientRegion = true,
 
         };
+
+        var buckets = await s3Client.ListBucketsAsync();
+
+
+        if (buckets.Buckets.Exists(x => x.BucketName == bucketRequest.Name))
+        {
+            return new BucketNameConflictError();
+        }
 
         var response = await s3Client.PutBucketAsync(request);
         return response;
@@ -81,10 +90,15 @@ public class BucketManager
 
         return response;
     }
-    public async Task<ListBucketsResponse> ListBuckets()
+    public async Task<OneOf<List<S3Bucket>, ListBucketInternalServerError>> ListBuckets()
     {
         var res = await s3Client.ListBucketsAsync();
-        return res;
+        if (res.HttpStatusCode != System.Net.HttpStatusCode.OK)
+        {
+            return new ListBucketInternalServerError();
+        }
+
+        return res.Buckets;
     }
     public async Task<PutBucketPolicyResponse> CreateBucketPolicy(BucketPolicyRequestModel bucketPolicy)
     {

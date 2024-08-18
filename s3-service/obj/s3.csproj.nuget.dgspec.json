@@ -46,9 +46,17 @@
               "target": "Package",
               "version": "[3.7.400.3, )"
             },
+            "OneOf": {
+              "target": "Package",
+              "version": "[3.0.271, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.4.0, )"
+            },
+            "Swashbuckle.AspNetCore.Annotations": {
+              "target": "Package",
+              "version": "[6.7.1, )"
             }
           },
           "imports": [
