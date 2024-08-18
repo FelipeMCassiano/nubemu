@@ -18,8 +18,7 @@ public class Ec2Manager
    }
 );
 
-    private static Dictionary<string, string> _imagesIds = new Dictionary<string, string>(){
-        {"ubuntu", "ami-785db401"},
+    private static Dictionary<string, string> _imagesIds = new Dictionary<string, string>(){ {"ubuntu", "ami-785db401"},
             {"amazon-linux", "ami-760aaa0f"},
             {"windows", "ami-03cf127a"},
     };
@@ -47,6 +46,7 @@ public class Ec2Manager
         };
 
         var response = await _ec2Client.RunInstancesAsync(request);
+        _ec2Client.runI
 
         return response;
 
@@ -54,6 +54,9 @@ public class Ec2Manager
 
     public async Task<List<InstanceResponseModel>> ListEc2Instances()
     {
+
+
+
         var nameTag = new Tag { Key = "Name" };
 
         var response = await _ec2Client.DescribeInstancesAsync();
@@ -70,7 +73,7 @@ public class Ec2Manager
                     continue;
                 }
 
-                var instance = new InstanceResponseModel(name.Value, i.State.Name);
+                var instance = new InstanceResponseModel(i.InstanceId, name.Value, i.State.Name);
 
                 instances.Add(instance);
 
@@ -78,6 +81,60 @@ public class Ec2Manager
         }
 
         return instances;
+
+    }
+    public async Task<TerminateInstancesResponse> TerminateInstance(string instanceName)
+    {
+        var instaces = await GetInstancesByName(instanceName);
+
+        var instancesIds = new List<string>();
+        foreach (var i in instaces)
+        {
+            instancesIds.Add(i.instanceId);
+
+        }
+        var request = new TerminateInstancesRequest
+        {
+            InstanceIds = instancesIds
+        };
+
+        var response = await _ec2Client.TerminateInstancesAsync(request);
+        return response;
+    }
+
+    public async Task<List<InstanceResponseModel>> GetInstancesByName(string instanceName)
+    {
+        var describeInstancesRequest = new DescribeInstancesRequest
+        {
+            Filters = new List<Filter>
+        {
+            new Filter
+            {
+                Name = "tag:Name",
+                Values = new List<string> { instanceName }
+            }
+        }
+        };
+
+        var describeInstancesResponse = await _ec2Client.DescribeInstancesAsync(describeInstancesRequest);
+
+        var instanceStatusList = new List<InstanceResponseModel>();
+
+        foreach (var reservation in describeInstancesResponse.Reservations)
+        {
+            foreach (var instance in reservation.Instances)
+            {
+                var name = instance.Tags.Find(x => x.Key == "Name");
+                if (name is null) continue;
+
+                instanceStatusList.Add(new InstanceResponseModel(
+                    instance.InstanceId,
+                    name.Value,
+                    instance.State.Name.Value));
+            }
+        }
+
+        return instanceStatusList;
 
     }
 
